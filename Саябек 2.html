@@ -1,0 +1,500 @@
+<!DOCTYPE HTML>
+<html lang="ru">
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>История электромобилей</title>
+    <style>
+        body {
+            font-family: "Times New Roman", Times, serif;
+            background-color: #f0f0f0;
+            color: black;
+            margin: 0;
+            padding: 20px;
+        }
+        .background {
+    background: linear-gradient(to right, red, yellow);
+    height: 200px;
+}
+        nav {
+            background-color: #34495e;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+            margin: 0 5px;
+            transition: background-color 0.3s;
+        }
+
+        nav a:hover {
+            background-color: #2c3e50;
+        }
+
+        #text-block {
+            border: 1px solid darkslategray;
+            padding: 2cm 1cm 2cm 3cm;
+            background-color: #d3d3d3;
+            text-indent: 1.5cm;
+            font-size: 14pt;
+            position: relative;
+        }
+
+        #text-block::first-letter {
+            font-size: 18pt;
+            font-weight: bold;
+        }
+
+        h1 {
+            font-size: 24pt;
+            color: green;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 20pt;
+        }
+
+        h3 {
+            font-size: 16pt;
+            text-align: right;
+        }
+
+        h4 {
+            font-size: 16pt;
+            color: black;
+
+        }
+
+        ul, ol {
+            margin-left: 20px;
+            color: black;
+            list-style-type: square;
+        }
+
+        table {
+            width: 80%;
+            border-collapse: collapse;
+            margin: 20px auto;
+        }
+
+        table th {
+            background-color: black;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        table td {
+            border: 1px solid darkslategray;
+            padding: 10px;
+        }
+
+        table tr:nth-child(even) {
+            background-color: #f0f0f0;
+        }
+
+        table tr:nth-child(odd) {
+            background-color: white;
+        }
+
+        .fixed-element {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: blue;
+            padding: 10px;
+            color: white;
+            border-radius: 5px;
+        }
+
+        input[type="submit"] {
+            background: linear-gradient(to right, #ff4500, #ff7f50);
+            border: none;
+            padding: 10px 20px;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+        }
+
+        input[type="submit"]:hover {
+            transform: scale(1.1);
+        }
+
+        input[type="submit"]:active {
+            transform: scale(0.95);
+        }
+
+        .image-wrapper {
+            float: right;
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
+
+        .image-wrapper img {
+            width: 200px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <script>
+    // ===== 1. Изменение стиля или атрибутов =====
+    document.querySelector("#change-style-btn").addEventListener("click", () => {
+        // Изменяем стиль заголовка
+        const header = document.querySelector("h1");
+        header.style.color = "blue"; // Меняем цвет
+        header.style.fontSize = "32px"; // Меняем размер шрифта
+        header.style.textShadow = "2px 2px 5px gray"; // Добавляем тень
+
+        // Добавляем атрибут к ссылке
+        const link = document.querySelector('a[href="https://ru.wikipedia.org/wiki/%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D1%8C"]');
+        link.setAttribute("title", "Перейти к статье на Википедии");
+        link.style.fontWeight = "bold"; // Делаем текст жирным
+
+        alert("Стиль и атрибуты изменены!");
+    });
+
+    // ===== 2. Сортировка таблицы =====
+    document.querySelector("#sort-table-btn").addEventListener("click", () => {
+        const table = document.querySelector("table tbody");
+        const rows = Array.from(table.rows).slice(0, -1); // Игнорируем строку с "Итогом"
+
+        // Сортируем строки по значению в колонке "Запас хода"
+        rows.sort((a, b) => {
+            const rangeA = parseInt(a.cells[2].innerText);
+            const rangeB = parseInt(b.cells[2].innerText);
+            return rangeA - rangeB;
+        });
+
+        // Перезаписываем таблицу
+        rows.forEach(row => table.appendChild(row));
+
+        alert("Таблица успешно отсортирована!");
+    });
+
+    // ===== 3. Добавление в список "Плюсы" =====
+    document.querySelector("#add-plus-btn").addEventListener("click", () => {
+        const ul = document.querySelector("ul");
+        const newItem = prompt("Введите новый плюс:");
+        if (newItem) {
+            const li = document.createElement("li");
+            li.textContent = newItem;
+            ul.appendChild(li);
+            alert("Новый плюс добавлен!");
+        }
+    });
+
+    // ===== 4. Добавление в список "Минусы" =====
+    document.querySelector("#add-minus-btn").addEventListener("click", () => {
+        const ol = document.querySelector("ol");
+        const newItem = prompt("Введите новый минус:");
+        if (newItem) {
+            const li = document.createElement("li");
+            li.textContent = newItem;
+            ol.appendChild(li);
+            alert("Новый минус добавлен!");
+        }
+    });
+
+    // ===== 5. Работа с BOM: предупреждение о выходе =====
+    window.addEventListener("beforeunload", (event) => {
+        event.preventDefault();
+        event.returnValue = "Вы уверены, что хотите покинуть страницу?";
+    });
+</script>
+
+
+    <nav>
+        <a href="#elektromobil">Электромобиль 19 века</a>
+        <a href="#zolotoy-veka">Золотой век</a>
+        <a href="#feedback">Форма обратной связи</a>
+        <a href="Новый текстовый документ (2).html">Дополнительно</a>
+        <a href="https://ru.wikipedia.org/wiki/%D0%AD%D0%BB%D0%B5%D0%BA%D1%82%D1%80%D0%BE%D0%BC%D0%BE%D0%B1%D0%B8%D0%BB%D1%8C" target="_blank">Внешний сайт</a>
+    </nav>
+
+   <h2 id="title">История электромобилей</h2>
+    <button id="update-title-btn">Изменить заголовок</button>
+
+    <h2 id="elektromobil">Электромобиль 19 века</h2>
+    <div id="text-block">
+        <div class="image-wrapper">
+            <img src="IMG0994b2604b849f0f18ba6d18cfe8a928-1000x750.jpg" alt="Электромобиль 19 века">
+        </div>
+        <p>В 1859 году французский физик <strong>Гастон Планте</strong> изобрел свинцово-кислотный аккумулятор, который стал основой для первого электромобиля, созданного на трехколесном велосипеде Джеймса Старли.</p>
+    </div>
+
+
+    
+    <h2 id="zolotoy-veka">Золотой век (1890-1910)</h2>
+    <div id="text-block">
+        <p>В конце 1890-х годов интерес к автомобилям с двигателем внутреннего сгорания значительно возрос. Электрические такси начали появляться на улицах городов.</p>
+    </div>
+<h2>Действия</h2>
+<button id="change-style-btn">Изменить стиль</button>
+<button id="add-plus-btn">Добавить в плюсы</button>
+<button id="add-minus-btn">Добавить в минусы</button>
+<button id="sort-table-btn">Сортировать таблицу по запасу хода</button>
+<h2>Действия с таблицей</h2>
+<button id="remove-table-btn">Удалить таблицу</button>
+<button id="shrink-table-btn">Уменьшить таблицу на 20%</button>
+
+    
+    <h3>Плюсы и минусы электромобилей</h3>
+    <h4 style="color: red;">Плюсы</h4>
+    <ul>
+        <li>Экологичность</li>
+        <li>Низкие эксплуатационные расходы</li>
+        <li>Меньше шумов</li>
+    </ul>
+
+    <h4 style="color: red;">Минусы</h4>
+    <ol>
+        <li>Дороговизна производства</li>
+        <li>Ограниченный запас хода</li>
+        <li>Долгое время зарядки</li>
+    </ol>
+
+    <h2>Сравнение различных типов автомобилей</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Тип автомобиля</th>
+                <th>Экологичность</th>
+                <th>Запас хода (км)</th>
+                <th>Время зарядки (ч)</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Электромобиль</td>
+                <td>Высокая</td>
+                <td>300</td>
+                <td>1-8</td>
+            </tr>
+            <tr>
+                <td>Гибридный</td>
+                <td>Средняя</td>
+                <td>700</td>
+                <td>2-4</td>
+            </tr>
+            <tr>
+                <td>Бензиновый</td>
+                <td>Низкая</td>
+                <td>600</td>
+                <td>-</td>
+            </tr>
+            <tr>
+                <td colspan="3"><strong>Итог</strong></td>
+                <td><strong>Электромобили - будущее транспорта!</strong></td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 id="feedback">Форма обратной связи</h2>
+    <form id="feedback-form">
+        <label for="username">Имя:</label>
+        <input type="text" id="username" name="username" required placeholder="Введите ваше имя"><br><br>
+
+        <label for="email">Электронная почта:</label>
+        <input type="email" id="email" name="email" required placeholder="Введите вашу почту"><br><br>
+
+        <label for="message">Сообщение:</label><br>
+        <textarea id="message" name="message" rows="4" cols="50" placeholder="Введите ваше сообщение"></textarea><br><br>
+
+        <input type="submit" value="Отправить">
+    </form>
+
+    <div id="form-result"></div>
+
+   <script>
+    // Инициализируем объект для хранения данных пользователя
+    const userFeedback = {
+        username: '',
+        email: '',
+        message: ''
+    };
+    
+    // Функция обработки отправки формы
+    function handleSubmit(event) {
+        event.preventDefault(); // Предотвращаем перезагрузку страницы при отправке формы
+        console.log("Отправка формы предотвращена");
+
+        const form = event.target; // Получаем объект формы
+        console.log("Получена форма: ", form);
+
+        const formData = new FormData(form); // Создаем объект FormData для работы с данными формы
+        console.log("Создан объект FormData с данными формы.");
+
+        // Записываем данные из формы в объект userFeedback
+        userFeedback.username = formData.get('username');
+        console.log("Имя пользователя: ", userFeedback.username);
+
+        userFeedback.email = formData.get('email');
+        console.log("Email пользователя: ", userFeedback.email);
+
+        userFeedback.message = formData.get('message');
+        console.log("Сообщение пользователя: ", userFeedback.message);
+
+        // Проверка наличия необходимых данных
+        if (userFeedback.username && userFeedback.email.includes('@') && userFeedback.message) {
+            // Если все данные корректны, выводим успешное сообщение
+            document.querySelector('#form-result').innerText = "Спасибо, " + userFeedback.username + "! Ваше сообщение успешно отправлено.";
+            console.log("Сообщение успешно отправлено.");
+        } else {
+            // Если данные некорректны, просим пользователя проверить их
+            document.querySelector('#form-result').innerText = "Пожалуйста, проверьте введенные данные.";
+            console.log("Некорректные данные, требуется проверка.");
+        }
+    }
+
+    // Добавляем обработчик события отправки формы
+    document.querySelector('#feedback-form').addEventListener('submit', handleSubmit);
+    console.log("Обработчик события отправки формы добавлен.");
+</script>
+
+
+<script>
+    // Удаление таблицы с анимацией
+    $("#remove-table-btn").on("click", function () {
+        $("table").fadeOut(1000, function () {
+            $(this).remove(); // Удаление таблицы после анимации
+        });
+    });
+
+     $("#shrink-table-btn").on("click", function () {
+        const currentWidth = $("table").width(); // Текущая ширина таблицы в пикселях
+        const newWidth = currentWidth * 0.8; // Уменьшаем ширину на 20%
+        $("table").animate(
+            {
+                width: newWidth, // Новая ширина
+            },
+            1000 // Длительность анимации в миллисекундах
+        );
+    });
+
+      // Изменение текста заголовка
+        $("#update-title-btn").on("click", function () {
+            var newTitle = prompt("Введите новый заголовок для истории электромобилей:");
+            if (newTitle) {
+                $("#title").text(newTitle);  // Изменяем текст заголовка
+            }
+        });
+</script>
+
+<div id="slider-container">
+        <p>Выберите размер текста:</p>
+        <div id="slider"></div>
+        <div id="slider-value">Размер текста: 20px</div>
+    </div>
+
+    <!-- Текст, который будем изменять -->
+    <div id="text-to-change">
+        Это текст, который будет изменяться!
+    </div>
+
+
+    <script>
+     // Изменение текста заголовка
+        $("#update-title-btn").on("click", function () {
+            var newTitle = prompt("Введите новый заголовок для истории электромобилей:");
+            if (newTitle) {
+                $("#title").text(newTitle);  // Изменяем текст заголовка
+            }
+        });
+
+        // Инициализация слайдера
+        $("#slider").slider({
+            value: 20,  // Начальное значение слайдера (20px)
+            min: 10,    // Минимальный размер шрифта (10px)
+            max: 50,    // Максимальный размер шрифта (50px)
+            step: 1,    // Шаг изменения размера
+            slide: function (event, ui) {
+                // При изменении слайдера обновляем текст
+                $("#slider-value").text("Размер текста: " + ui.value + "px");
+                // Изменяем размер текста в элементе #text-to-change
+                $("#text-to-change").css("font-size", ui.value + "px");
+            }
+        });
+    </script>
+
+    <div id="app">
+    <h1>{{ message }}</h1>
+
+    <!-- Кнопки для добавления плюсов и минусов -->
+    <button @click="addPlusBtn">Добавить плюс</button>
+    <button @click="addMinusBtn">Добавить минус</button>
+
+    <!-- Списки плюсов и минусов -->
+    <h3>Плюсы электромобилей:</h3>
+    <ul>
+        <li v-for="(plus, index) in pluses" :key="index">{{ plus }}</li>
+    </ul>
+
+    <h3>Минусы электромобилей:</h3>
+    <ul>
+        <li v-for="(minus, index) in minuses" :key="index">{{ minus }}</li>
+    </ul>
+
+    <!-- Кнопка для скрытия или показа дополнительной информации -->
+    <button @click="toggleInfo">Тыкни, чтобы скрыть/показать дополнительную информацию</button>
+    
+    <div v-if="isInfoVisible">
+        <h4>Дополнительная информация:</h4>
+        <p>Электромобили становятся всё более популярными и влияют на развитие транспорта по всему миру.</p>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            message: "Управление списками через Vue.js",
+            pluses: [
+                "Экологичность",
+                "Низкие эксплуатационные расходы",
+                "Меньше шумов"
+            ],
+            minuses: [
+                "Дороговизна производства",
+                "Ограниченный запас хода",
+                "Долгое время зарядки"
+            ],
+            isInfoVisible: false // Флаг для отображения дополнительной информации
+        },
+        methods: {
+            addPlusBtn() {
+                const newPlus = prompt("Введите новый плюс:");
+                if (newPlus) {
+                    this.pluses.push(newPlus);
+                }
+            },
+            addMinusBtn() {
+                const newMinus = prompt("Введите новый минус:");
+                if (newMinus) {
+                    this.minuses.push(newMinus);
+                }
+            },
+            toggleInfo() {
+                this.isInfoVisible = !this.isInfoVisible; // Переключаем видимость информации
+            }
+        }
+    });
+</script>
+
+
+
+    <h2>Дополнительная информация</h2>
+    <p>Для получения более
+
+</body>
